@@ -14,8 +14,8 @@ def count_percentage(json_dict):
     except:
         return False
 
-def dump_json(file_name, data):
-    with open(os.path.join("output/english/done", f"{file_name}.json"), "w+") as file:
+def dump_json(file_name, data, language):
+    with open(os.path.join(f"output/{language}/done", f"{file_name}.json"), "w+") as file:
         json.dump(data, file, indent=4, ensure_ascii=False,)
         
 def count_total_tokens(json_dict):
@@ -50,6 +50,6 @@ if __name__=="__main__":
                     json_list.append(data)
                     id+=1
             file_name = file.split("/")[-1].split(".json")[0].split("_analysis")[0]
-            dump_json(file_name=file_name, data=json_list)
+            dump_json(file_name=file_name, data=json_list, language=language)
             print(file)
             

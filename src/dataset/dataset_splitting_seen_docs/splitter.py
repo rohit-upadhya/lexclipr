@@ -28,14 +28,14 @@ def dump_json(base_path, unique_file_name, data):
 if __name__=="__main__":
     languages = ["russian", "ukrainian", "romanian", "french", "turkish", "italian", "english"]
     for language in languages:
-        input_data_path = "output/{language}/done"
+        input_data_path = f"output/{language}/done"
         files = []
         for (dirpath, dirnames, filenames) in os.walk(input_data_path):
             for filename in filenames:
                 if "json" in filename:
                     files.append(os.path.join(dirpath, filename))
-        train_base_path = "/srv/upadro/dataset/{language}/unseen_docs/train"
-        test_base_path = "/srv/upadro/dataset/{language}/unseen_docs/test"
+        train_base_path = f"/srv/upadro/dataset/{language}/unseen_docs/train"
+        test_base_path = f"/srv/upadro/dataset/{language}/unseen_docs/test"
         
         doc_set = set()
         for file in files:

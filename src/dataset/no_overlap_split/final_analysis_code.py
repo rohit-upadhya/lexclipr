@@ -83,7 +83,6 @@ if __name__ == "__main__":
                     total_qj.add(qj_str)
                     unique_queries.add(unique_query_str)
                     paragraphs += len(item["all_paragraphs"])
-                    # print(len(item["paragraph_numbers"]))
                     percentage += len(item["paragraph_numbers"]) / len(item["all_paragraphs"])
                     # print(percentage)
                 info["unique_queries_total"] += len(unique_queries)
@@ -97,7 +96,6 @@ if __name__ == "__main__":
                 
         final_data.append(info)
         print(f"{language} : Done!")
-    # Save the final data to JSON
     output_path = "output/new_split_info/language_data.json"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -108,7 +106,6 @@ if __name__ == "__main__":
     
     df = create_language_dataframe(final_data)
     
-    # Save the DataFrame to a CSV file
     output_csv_path = "output/new_split_info/language_data.csv"
     os.makedirs(os.path.dirname(output_csv_path), exist_ok=True)
     df.to_csv(output_csv_path, index=True)

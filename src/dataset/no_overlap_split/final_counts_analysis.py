@@ -151,7 +151,6 @@ def run_unique_number_queries(files, split):
 
 if __name__=="__main__":
     
-    # languages = ["english", "french", "italian", "romanian", "russian", "turkish", "ukrainian"]
     languages = ["french", "italian", "romanian", "russian", "turkish", "ukrainian"]
     
     for language in languages:
@@ -165,25 +164,6 @@ if __name__=="__main__":
                         all_files.append(os.path.join(dirpath, filename))
         print(all_files[1], all_files[-1], all_files[int(len(all_files)/2)])
         run_percentage(all_files, lang=language)
-    
-    # train_data_path = "/srv/upadro/dataset/english/unseen_queries/train"
-    # test_data_path = "/srv/upadro/dataset/english/unseen_queries/test"
-    # unique_query_test_data_path = "/srv/upadro/dataset/english/unseen_queries/unique_query_test"
-    # val_data_path = "/srv/upadro/dataset/english/unseen_queries/val"
-    # train_test_val = "/srv/upadro/dataset/english/unseen_queries/train_test_val"
-    # data_paths = [train_data_path, test_data_path, val_data_path, unique_query_test_data_path, train_test_val]
-    # for input_data_path in data_paths:
-    #     files = []
-    #     for (dirpath, dirnames, filenames) in os.walk(input_data_path):
-    #         for filename in filenames:
-    #             if "json" in filename:
-    #                 files.append(os.path.join(dirpath, filename))
-    #     split = input_data_path.split("/")[-1]
-    #     run_percentage(files, split)
-    #     run_unique_number_queries(files, split)
-    
-    
-    
     
     
         

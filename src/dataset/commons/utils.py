@@ -56,8 +56,7 @@ def split_paragraph_tuple(input_tuple, paragraph_pattern=r'§{1,2}\s*(\d+)(?:-(\
         prev_pos = match_positions[i - 1]
         curr_pos = match_positions[i]
         
-        # Check if the distance between two paragraph tags is small enough to be considered the same segment
-        if curr_pos - prev_pos < 100:  # Adjust the number 100 as needed
+        if curr_pos - prev_pos < 100:
             result.append((text[start:curr_pos].strip(), size, font, None))
             start = curr_pos
             
