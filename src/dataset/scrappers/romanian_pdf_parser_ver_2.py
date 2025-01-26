@@ -11,16 +11,15 @@ def normalize_link(link):
     return link
 
 def scrape(filePath):
-    results = []  # list of tuples that store the information as (text, font size, font name, link)
-    pdf = fitz.open(filePath)  # filePath is a string that contains the path to the pdf
+    results = []
+    pdf = fitz.open(filePath)
 
     for page_num, page in enumerate(pdf):
-        if page_num < 5:  # Skip the first three pages (0, 1, 2)
+        if page_num < 5:
             continue
-        # Extract text and its properties
         dict = page.get_text("dict")
         blocks = dict["blocks"]
-        links = page.get_links()  # Get all links on the page
+        links = page.get_links()
 
         for block in blocks:
             if "lines" in block.keys():
@@ -136,17 +135,15 @@ def combine_adjacent_entries_with_same_size(results):
     for i in range(1, len(results)):
         text, size, font, link = results[i]
 
-        if size >= 12.0001 and utils.compare(size, current_size): #size == current_size and size >11.5:
+        if size >= 12.0001 and utils.compare(size, current_size):
             combined_text += " " + text
         else:
-            # if current_size >11.5:
             combined_results.append((combined_text, current_size, current_font, current_link))
             combined_text = text
             current_size = size
             current_font = font
             current_link = link
     
-    # Append the last combined result
     combined_results.append((combined_text, current_size, current_font, current_link))
     
     return combined_results
@@ -177,7 +174,7 @@ def combine_entries_with_section(results):
         if link is not None and i + 1 < len(results) and "pct." in results[i + 1][0] and results[i + 1][3] is None and results[i+1][1] < 12.0001:
             combined_text = text + " " + results[i + 1][0]
             final_results.append((combined_text, size, font, link))
-            i += 2  # Skip the next entry as it has been combined
+            i += 2 
         else:
             final_results.append((text, size, font, link))
             i += 1
@@ -263,10 +260,8 @@ def combine_paragraph_numbers(results):
         if any(isinstance(item, str) and item.startswith('—') and item.endswith('—') and len(item) == 3 for item in query):
             continue
         
-        # Convert inner lists to tuples for the key
         query_key = tuple(tuple(item) if isinstance(item, list) else item for item in query)
         key = (query_key, link)
-        # Store the original query format and other details
         if key not in combined_results:
             combined_results[key] = {'texts': [], 'para_nums': set(), 'size': size, 'font': font, 'original_query': query}
         combined_results[key]['texts'].append(text)
@@ -279,7 +274,6 @@ def combine_paragraph_numbers(results):
         size = value['size']
         font = value['font']
         para_nums = sorted(value['para_nums'])
-        # Convert query back to list of lists
         original_query = [list(item) if isinstance(item, tuple) else item for item in value['original_query']]
         original_query = tuple(original_query)
         final_results.append((combined_text, size, font, link, original_query, para_nums))
@@ -287,7 +281,6 @@ def combine_paragraph_numbers(results):
     return final_results
 
 def convert_to_json(final_result, file_name = "results.json"):
-    # Define the output JSON structure
     json_result = []
     for result in final_result:
         entry = {
@@ -300,7 +293,6 @@ def convert_to_json(final_result, file_name = "results.json"):
         }
         json_result.append(entry)
 
-    # Write the JSON object to a file
     file_name = os.path.join("output", "romanian", "jsons", file_name)
     with open(file_name, "w+") as file:
         json.dump(json_result, file, ensure_ascii=False, indent=4)
@@ -312,7 +304,6 @@ if __name__ == "__main__":
         for filename in filenames:
             if "pdf" in filename:
                 files.append(os.path.join(dirpath, filename))
-    # print(files)
     for file in files:
         print(file)
         file_name = file.split("/")[-1].split(".pdf")[0]

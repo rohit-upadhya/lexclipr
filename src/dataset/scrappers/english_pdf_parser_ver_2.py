@@ -16,7 +16,6 @@ def scrape(filePath):
     for page_num, page in enumerate(pdf):
         if page_num < 5:
             continue
-        # Extract text and its properties
         dict = page.get_text("dict")
         blocks = dict["blocks"]
         links = page.get_links()
@@ -88,7 +87,6 @@ def combine_adjacent_entries_with_same_link(results):
             current_font = font
             current_link = link
     
-    # Append the last combined result
     combined_results.append((combined_text, current_size, current_font, current_link))
     
     return combined_results
@@ -135,7 +133,7 @@ def combine_adjacent_entries_with_same_size(results):
     for i in range(1, len(results)):
         text, size, font, link = results[i]
 
-        if size >= 12.0001 and utils.compare(size, current_size): #size == current_size and size >11.5:
+        if size >= 12.0001 and utils.compare(size, current_size):
             combined_text += " " + text
         else:
             # if current_size >11.5:
@@ -176,7 +174,7 @@ def combine_entries_with_section(results):
         if link is not None and i + 1 < len(results) and "§" in results[i + 1][0] and results[i + 1][3] is None and results[i+1][1] < 12.0001:
             combined_text = text + " " + results[i + 1][0]
             final_results.append((combined_text, size, font, link))
-            i += 2  # Skip the next entry as it has been combined
+            i += 2
         else:
             final_results.append((text, size, font, link))
             i += 1
@@ -196,7 +194,6 @@ def build_query(results):
             parts = item[0].split(". ")
             headings = " ".join(parts[1:])
             query_tuple.append(headings.strip())
-            # query_tuple.append(item[0].split(". ")[-1].strip())
         final_results.append((text, size, font, link, query_tuple))
     return final_results
 
@@ -263,10 +260,8 @@ def combine_paragraph_numbers(results):
         if any(isinstance(item, str) and item.startswith('—') and item.endswith('—') and len(item) == 3 for item in query):
             continue
         
-        # Convert inner lists to tuples for the key
         query_key = tuple(tuple(item) if isinstance(item, list) else item for item in query)
         key = (query_key, link)
-        # Store the original query format and other details
         if key not in combined_results:
             combined_results[key] = {'texts': [], 'para_nums': set(), 'size': size, 'font': font, 'original_query': query}
         combined_results[key]['texts'].append(text)
@@ -279,7 +274,6 @@ def combine_paragraph_numbers(results):
         size = value['size']
         font = value['font']
         para_nums = sorted(value['para_nums'])
-        # Convert query back to list of lists
         original_query = [list(item) if isinstance(item, tuple) else item for item in value['original_query']]
         original_query = tuple(original_query)
         final_results.append((combined_text, size, font, link, original_query, para_nums))
@@ -287,7 +281,6 @@ def combine_paragraph_numbers(results):
     return final_results
 
 def convert_to_json(final_result, file_name = "results.json"):
-    # Define the output JSON structure
     json_result = []
     for result in final_result:
         entry = {
@@ -300,7 +293,6 @@ def convert_to_json(final_result, file_name = "results.json"):
         }
         json_result.append(entry)
 
-    # Write the JSON object to a file
     file_name = os.path.join("output","english","jsons", file_name)
     with open(file_name, "w+") as file:
         json.dump(json_result, file, ensure_ascii=False, indent=4)
@@ -312,7 +304,6 @@ if __name__ == "__main__":
         for filename in filenames:
             if "pdf" in filename:
                 files.append(os.path.join(dirpath, filename))
-    # print(files)
     for file in files:
         print(file)
         file_name = file.split("/")[-1].split(".pdf")[0]
@@ -320,10 +311,8 @@ if __name__ == "__main__":
         filtered_results = filter_results(results=results)
         
         
-        # split_paragraphs = split_paragraphs_in_collection(results=filtered_results)
         combined_links = combine_adjacent_entries_with_same_link(results=filtered_results)
         split_paragraphs = split_paragraphs_in_collection(results=combined_links)
-        # removed_arial = remove_arial(combined_links)
         remove_commas = remove_comma(split_paragraphs)
         combined_size = combine_adjacent_entries_with_same_size(results=remove_commas)
         seperate_links = separate_links(combined_size)
@@ -333,17 +322,10 @@ if __name__ == "__main__":
         relevant_results_with_para_num = obtain_paragraph_numbers(relevant_results)
         relevant_results_triplet = combine_paragraph_numbers(relevant_results_with_para_num)
         final_result, headings, unusable = obtain_paragraphs(relevant_results_triplet)
-        # final_result = obtain_paragraphs(relevant_results_with_para_num)
         
-        # for result in final_results:
-        #     text, size, font, link = result
-        #     if link is None:
-        #         if "§" in text:
-        #             print(result)
         print(file)
         print("filtered_results", len(filtered_results))
         print("combined_links", len(combined_links))
-        # print("removed_arial", len(removed_arial))
         print("remove_commas", len(remove_commas))
         print("combined_size", len(combined_size))
         print("seperate_links", len(seperate_links))
